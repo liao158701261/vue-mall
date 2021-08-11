@@ -23,122 +23,131 @@
 </template>
 
 <script>
-import { getContact } from "api";
+import { getContact } from 'api'
 export default {
-  data() {
+  data () {
     return {
-      chosenAddressId: "1",
-      list: [],
-    };
+      chosenAddressId: '1',
+      list: []
+    }
   },
-  created() {
-    this.getContact();
+  created () {
+    this.getContact()
   },
-  beforeRouteEnter(to, from, next) {
-    console.log(from);
-    localStorage.setItem("from", from.path);
-    next();
+  beforeRouteEnter (to, from, next) {
+    console.log(from)
+    localStorage.setItem('from', from.path)
+    next()
   },
   methods: {
-    choseContact(contact, index) {
-      //联系人的切换
-      console.log('555',contact, index);
-      const from = localStorage.getItem("from");
-      if (from != "/my") {
-        //从订单页过来
+    choseContact (contact, index) {
+      // 联系人的切换
+      console.log('555', contact, index)
+      const from = localStorage.getItem('from')
+      if (from !== '/my') {
+        // 从订单页过来
         this.$router.push({
-          path: "/order",
+          path: '/order',
           query: {
-            id: contact.id,
-          },
-        });
+            id: contact.id
+          }
+        })
       }
     },
-    onClickRight() {
-      const from = localStorage.getItem("from");
-      console.log("1213", from);
-      if ((from === "/my")) {
-        //从订单页过来
+    onClickRight () {
+      const from = localStorage.getItem('from')
+      console.log('1213', from)
+      if ((from === '/my')) {
+        // 从订单页过来
         this.$router.push({
-          path: "/my",
-          query: {
-            // id: contact.id,
-          },
-        });
-      }
-      if ((from === "/contactUpdate")) {
-        //从订单页过来
-        this.$router.push({
-          path: "/my",
+          path: '/my',
           query: {
             // id: contact.id,
-          },
-        });
+          }
+        })
+      }
+      if ((from === '/order')) {
+        // 从订单页过来
+        this.$router.push({
+          path: '/order',
+          query: {
+            // id: contact.id,
+          }
+        })
+      }
+      if ((from === '/contactUpdate')) {
+        // 从订单页过来
+        this.$router.push({
+          path: '/order',
+          query: {
+            // id: contact.id,
+          }
+        })
       }
     },
-    onAdd() {
-      this.$router.push("/contactAdd");
+    onAdd () {
+      this.$router.push('/contactAdd')
     },
-    onEdit(contact) {
-      //进入编辑页
+    onEdit (contact) {
+      // 进入编辑页
       this.$router.push({
-        path: "/contactUpdate",
+        path: '/contactUpdate',
         query: {
-          id: contact.id,
-        },
-      });
+          id: contact.id
+        }
+      })
     },
-    onSelect() {},
-    getContact() {
+    onSelect () {},
+    getContact () {
       getContact({
-        token: localStorage.getItem("token"),
+        token: localStorage.getItem('token')
       }).then((res) => {
         if (res.data.code === 0) {
-          console.log(res);
-          const contacts = res.data.data.result;
-          let contactArr = [];
+          console.log(res)
+          const contacts = res.data.data.result
+          const contactArr = []
           contacts.forEach((contact) => {
-            //循环每个联系人 所有Key
-            let obj = {};
+            // 循环每个联系人 所有Key
+            const obj = {}
             for (const key in contact) {
               switch (key) {
-                case "id":
-                  obj.id = contact[key];
-                  break;
-                case "linkMan":
-                  obj.name = contact[key];
-                  break;
-                case "mobile":
-                  obj.tel = contact[key];
-                  break;
-                case "isDefault":
-                  obj.isDefault = contact[key];
-                  break;
-                case "address":
-                  obj.address = contact[key];
-                  break;
+                case 'id':
+                  obj.id = contact[key]
+                  break
+                case 'linkMan':
+                  obj.name = contact[key]
+                  break
+                case 'mobile':
+                  obj.tel = contact[key]
+                  break
+                case 'isDefault':
+                  obj.isDefault = contact[key]
+                  break
+                case 'address':
+                  obj.address = contact[key]
+                  break
                 default:
-                  break;
+                  break
               }
             }
-            contactArr.push(obj);
-          });
-          console.log(contactArr);
-          this.list = contactArr;
-          //定义默认选中联系人id
-          const contact = this.list.find((contact) => contact.isDefault);
-          //如果有默认联系人 选中 id 就是 默认联系人 id  否则 给第一个
+            contactArr.push(obj)
+          })
+          console.log(contactArr)
+          this.list = contactArr
+          // 定义默认选中联系人id
+          const contact = this.list.find((contact) => contact.isDefault)
+          // 如果有默认联系人 选中 id 就是 默认联系人 id  否则 给第一个
           if (contact) {
-            this.chosenAddressId = contact.id;
+            this.chosenAddressId = contact.id
           } else {
-            this.chosenAddressId = this.list[0].id;
+            this.chosenAddressId = this.list[0].id
           }
         }
-      });
-    },
+      })
+    }
   },
-  components: {},
-};
+  components: {}
+}
 </script>
 
 <style lang="scss" scoped>

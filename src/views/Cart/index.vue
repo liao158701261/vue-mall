@@ -72,165 +72,163 @@
 </template>
 
 <script>
-import { fetchCartItems, setBuyNumber, switchCheck, delCartItem } from "api";
-import { getToken, isLogin } from "utils";
-import { Dialog } from "vant";
-import CommonTab from "components/CommonTab";
+import { fetchCartItems, setBuyNumber, switchCheck, delCartItem } from 'api'
+import { getToken, isLogin } from 'utils'
+import { Dialog } from 'vant'
+import CommonTab from 'components/CommonTab'
 export default {
-  name: "cart",
-  data() {
+  name: 'cart',
+  data () {
     return {
       items: [],
       total: 0,
       titleNum: 0,
-      titles: "",
+      titles: '',
       isShow: true,
       show: false,
-      shownull: false,
-    };
+      shownull: false
+    }
   },
-  created() {
-    this.fetchCartItems();
-    console.log(this.$route);
+  created () {
+    this.fetchCartItems()
+    console.log(this.$route)
     // if()
   },
-  mounted() {
-    this.alter();
-    this.isToken();
+  mounted () {
+    this.alter()
+    this.isToken()
   },
-  updated() {
-    this.alter();
+  updated () {
+    this.alter()
   },
   watch: {
-    items() {
+    items () {
       // 监听购物车数据 将数据 存储到vuex中
-      this.$store.commit("cart/set_items", this.items);
-    },
+      this.$store.commit('cart/set_items', this.items)
+    }
   },
   methods: {
-    isToken() {
+    isToken () {
       if (!isLogin()) {
-        this.show = true;
+        this.show = true
       }
     },
-    alter() {
+    alter () {
       if (!this.$store.state.cart.items.length) {
-        this.titles = "购物车";
-        return;
+        this.titles = '购物车'
       } else {
-        this.titles = `购物车（${this.$store.state.cart.items.length}）`;
-        return;
+        this.titles = `购物车（${this.$store.state.cart.items.length}）`
       }
     },
-    delItem(key) {
+    delItem (key) {
       // 给确认框删除
       Dialog.confirm({
-        title: "删除商品",
-        message: "您确认删除吗",
+        title: '删除商品',
+        message: '您确认删除吗'
       }).then(() => {
         // on confirm
         delCartItem({
           key,
-          token: getToken(),
+          token: getToken()
         }).then((res) => {
           if (res.data.code === 0) {
-            this.items = res.data.data.items;
-            this.total = res.data.data.price;
+            this.items = res.data.data.items
+            this.total = res.data.data.price
           }
           if (res.data.code === 700) {
             // 全部删除
-            this.items = [];
-            this.total = 0;
-            this.shownull = true;
+            this.items = []
+            this.total = 0
+            this.shownull = true
           }
-        });
-      });
+        })
+      })
     },
-    onSubmit() {
-      this.$router.push('/order');
+    onSubmit () {
+      this.$router.push('/order')
     },
-    switchCheck(index) {
+    switchCheck (index) {
       // 修改商品选中状态
-      console.log(1111);
-      const { key, selected } = this.items[index];
+      console.log(1111)
+      const { key, selected } = this.items[index]
       switchCheck({
         key,
         selected,
-        token: getToken(),
+        token: getToken()
       }).then((res) => {
         if (res.data.code === 0) {
-          this.items = res.data.data.items;
-          this.total = res.data.data.price;
+          this.items = res.data.data.items
+          this.total = res.data.data.price
         }
-      });
+      })
     },
-    changeNum(index) {
+    changeNum (index) {
       // 修改商品购买数量
-      const { key, number } = this.items[index];
+      const { key, number } = this.items[index]
       setBuyNumber({
         key,
         number,
-        token: getToken(),
+        token: getToken()
       }).then((res) => {
-        console.log(res);
+        console.log(res)
         if (res.data.code === 0) {
-          this.items = res.data.data.items;
-          this.total = res.data.data.price;
+          this.items = res.data.data.items
+          this.total = res.data.data.price
         }
-      });
+      })
     },
-    title() {
-      this.titles = "购物车" + "(" + this.titleNum + ")";
+    title () {
+      this.titles = '购物车' + '(' + this.titleNum + ')'
     },
-    fetchCartItems() {
+    fetchCartItems () {
       fetchCartItems({
-        token: getToken(),
+        token: getToken()
       }).then((res) => {
         if (res.data.code === 0) {
-          console.log(res);
-          this.items = res.data.data.items;
-          this.total = res.data.data.price;
-          this.titleNum = res.data.data.goodsStatus.length;
+          console.log(res)
+          this.items = res.data.data.items
+          this.total = res.data.data.price
+          this.titleNum = res.data.data.goodsStatus.length
         }
         if (res.data.code === 700) {
-          //全部删除
-          this.items = [];
-          this.total = 0;
-          this.shownull = true;
+          // 全部删除
+          this.items = []
+          this.total = 0
+          this.shownull = true
         }
-      });
-    },
+      })
+    }
   },
   components: { CommonTab },
   computed: {
     allChecked: {
-      get() {
+      get () {
         return this.items.length === 0
           ? false
-          : this.items.every((item) => item.selected);
+          : this.items.every((item) => item.selected)
       },
-      set(val) {
+      set (val) {
         // 改变全选修改单选状态
         // 改变单选状态
         // 找到所有商品的key
-        const keys = [];
+        const keys = []
         this.items.forEach((item) => {
-          keys.push(item.key);
-        });
+          keys.push(item.key)
+        })
         switchCheck({
-          key: keys.join(","),
+          key: keys.join(','),
           selected: val,
-          token: getToken(),
+          token: getToken()
         }).then((res) => {
           if (res.data.code === 0) {
-            this.items = res.data.data.items;
-            this.total = res.data.data.price;
+            this.items = res.data.data.items
+            this.total = res.data.data.price
           }
-        });
-      },
-    },
-  },
-};
+        })
+      }
+    }
+  }
+}
 </script>
 
 <style lang="scss" scoped>

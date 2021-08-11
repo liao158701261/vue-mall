@@ -37,87 +37,87 @@
 </template>
 
 <script>
-import { orderContact, detailsContact, fetchCartItems } from "api";
-import { getToken } from "utils";
-import { Toast } from "vant";
+import { orderContact, detailsContact, fetchCartItems } from 'api'
+import { getToken } from 'utils'
+import { Toast } from 'vant'
 export default {
-  data() {
+  data () {
     return {
       currentContact: {},
       isShow: false,
       items: [],
       total: 0,
-      //订单联系人
-      contact: {},
-    };
+      // 订单联系人
+      contact: {}
+    }
   },
-  created() {
-    this.getContact();
-    this.fetchCartItems();
+  created () {
+    this.getContact()
+    this.fetchCartItems()
   },
   methods: {
-    onSubmit() {
-      Toast.success("提交成功");
+    onSubmit () {
+      Toast.success('提交成功')
     },
-    fetchCartItems() {
-      //获取订单商品
+    fetchCartItems () {
+      // 获取订单商品
       fetchCartItems({
-        token: getToken(),
+        token: getToken()
       }).then((res) => {
-        console.log(res);
+        console.log(res)
         if (res.data.code === 0) {
-          this.total = res.data.data.price * 100;
-          const array = res.data.data.items;
+          this.total = res.data.data.price * 100
+          const array = res.data.data.items
           array.forEach((item) => {
             if (item.selected) {
-              this.items.push(item);
+              this.items.push(item)
             }
-          });
+          })
         }
-      });
+      })
     },
-    onAdd() {
-      Toast("新增");
-      this.$router.push("/contactAdd");
+    onAdd () {
+      Toast('新增')
+      this.$router.push('/contactAdd')
     },
-    getContact() {
-      //获取订单联系人
+    getContact () {
+      // 获取订单联系人
       if (this.$route.query.id) {
         detailsContact({
           id: this.$route.query.id,
-          token: getToken(),
+          token: getToken()
         }).then((res) => {
-          console.log("1111", res);
-          this.currentContact = res.data.data.info;
-        });
+          console.log('1111', res)
+          this.currentContact = res.data.data.info
+        })
       } else {
         orderContact({
-          token: getToken(),
+          token: getToken()
         }).then((res) => {
-          console.log("1212", res);
+          console.log('1212', res)
           if (res.data.code === 0) {
-            this.currentContact = res.data.data.info;
-            this.isShow = false;
+            this.currentContact = res.data.data.info
+            this.isShow = false
           }
           if (res.data.code === 700) {
-            this.isShow = true;
+            this.isShow = true
           }
-        });
+        })
       }
     },
-    onEdit() {
-      this.$router.push("/contactLists");
+    onEdit () {
+      this.$router.push('/contactLists')
     },
-    onClickRight() {
-      this.$router.push("/home");
-    },
+    onClickRight () {
+      this.$router.push('/cart')
+    }
   },
   computed: {
-    cardType() {
-      return this.currentContact.id ? "edit" : "add";
-    },
-  },
-};
+    cardType () {
+      return this.currentContact.id ? 'edit' : 'add'
+    }
+  }
+}
 </script>
 
 <style lang="scss" scoped>

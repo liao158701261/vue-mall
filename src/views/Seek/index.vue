@@ -66,151 +66,151 @@
 </template>
 
 <script>
-import { fetchItems } from "api";
+import { fetchItems } from 'api'
 export default {
-  data() {
+  data () {
     return {
-      value: "",
+      value: '',
       items: [],
       value1: 0,
-      value2: "a",
+      value2: 'a',
       option1: [
-        { text: "全部商品", value: 0 },
-        { text: "新款商品", value: 1 },
-        { text: "活动商品", value: 2 },
+        { text: '全部商品', value: 0 },
+        { text: '新款商品', value: 1 },
+        { text: '活动商品', value: 2 }
       ],
       option2: [
-        { text: "默认排序", value: "a" },
-        { text: "价格升序", value: "b" },
-        { text: "价格降序", value: "c" },
+        { text: '默认排序', value: 'a' },
+        { text: '价格升序', value: 'b' },
+        { text: '价格降序', value: 'c' }
       ],
       isShow: false,
       isFocus: true,
       isimg: false,
       isSort: false,
-      histories: [],
-    };
+      histories: []
+    }
   },
-  created() {
-    this.historied();
+  created () {
+    this.historied()
   },
   watch: {
-    value2(newVal, oldVal) {
-      console.log(newVal);
-      this.onSearch(this.value);
-    },
+    value2 (newVal, oldVal) {
+      console.log(newVal)
+      this.onSearch(this.value)
+    }
   },
-  beforeRouteEnter(to, from, next) {
-    console.log(from);
-    localStorage.setItem("from", from.path);
-    next();
+  beforeRouteEnter (to, from, next) {
+    console.log(from)
+    localStorage.setItem('from', from.path)
+    next()
   },
   methods: {
-    clickItem(id) {
+    clickItem (id) {
       this.$router.push({
-        path: "/details",
+        path: '/details',
         query: {
           id: id
-        },
-      });
+        }
+      })
     },
-    goto() {
-      const from = localStorage.getItem("from");
-      console.log(from);
-      if (from === "/home") {
-        this.$router.push("/home");
+    goto () {
+      const from = localStorage.getItem('from')
+      console.log(from)
+      if (from === '/home') {
+        this.$router.push('/home')
       } else {
-        if (from != "/home") {
-          this.$router.push(from);
+        if (from !== '/home') {
+          this.$router.push(from)
         }
       }
     },
-    empty() {
-      localStorage.setItem("his", []);
-      this.historied();
+    empty () {
+      localStorage.setItem('his', [])
+      this.historied()
     },
-    clivkHis(word) {
-      //点击历史记录
-      this.value = word;
-      this.onSearch();
+    clivkHis (word) {
+      // 点击历史记录
+      this.value = word
+      this.onSearch()
     },
-    historied() {
-      this.histories = localStorage.getItem("his")
-        ? JSON.parse(localStorage.getItem("his"))
-        : [];
+    historied () {
+      this.histories = localStorage.getItem('his')
+        ? JSON.parse(localStorage.getItem('his'))
+        : []
     },
-    gainFocus() {
-      this.items = [];
-      this.isFocus = true;
-      this.isimg = false;
-      this.isSort = false;
-      this.historied();
-      this.value = "";
+    gainFocus () {
+      this.items = []
+      this.isFocus = true
+      this.isimg = false
+      this.isSort = false
+      this.historied()
+      this.value = ''
     },
-    loseFocus() {
-      //失去焦点触发
-      this.isFocus = true;
-      this.isimg = false;
+    loseFocus () {
+      // 失去焦点触发
+      this.isFocus = true
+      this.isimg = false
     },
-    onSearch(val) {
+    onSearch (val) {
       // console.log(this.value);
-      //存储搜索记录
-      /* 
+      // 存储搜索记录
+      /*
       先取 转换成数组 操作数组 JSON.stringify存回去
       */
-      let his = localStorage.getItem("his")
-        ? JSON.parse(localStorage.getItem("his"))
-        : [];
-      his.unshift(this.value);
-      his = [...new Set(his)];
+      let his = localStorage.getItem('his')
+        ? JSON.parse(localStorage.getItem('his'))
+        : []
+      his.unshift(this.value)
+      his = [...new Set(his)]
       if (his.length >= 10) {
-        his.length = 10;
+        his.length = 10
       }
-      //存回去
-      localStorage.setItem("his", JSON.stringify(his));
-      //渲染数据
+      // 存回去
+      localStorage.setItem('his', JSON.stringify(his))
+      // 渲染数据
       fetchItems({
         k: this.value,
-        orderBy: this.orderBy,
+        orderBy: this.orderBy
       }).then((res) => {
-        console.log(res);
+        console.log(res)
         if (res.data.code === 0) {
-          this.items = res.data.data.result;
-          this.isimg = false;
-          this.isFocus = false;
-          this.isSort = true;
+          this.items = res.data.data.result
+          this.isimg = false
+          this.isFocus = false
+          this.isSort = true
         }
         if (res.data.code === 700) {
-          this.items = [];
-          this.isimg = true;
-          this.isFocus = false;
+          this.items = []
+          this.isimg = true
+          this.isFocus = false
         }
-      });
-    },
+      })
+    }
   },
   computed: {
-    orderBy() {
-      let order = "";
-      /* 
+    orderBy () {
+      let order = ''
+      /*
       依赖active和priceUpDown
       */
       switch (this.value2) {
-        case "a":
-          order = "useful";
-          break;
-        case "b":
-          order = "priceUp";
-          break;
-        case "c":
-          order = "priceDown";
-          break;
+        case 'a':
+          order = 'useful'
+          break
+        case 'b':
+          order = 'priceUp'
+          break
+        case 'c':
+          order = 'priceDown'
+          break
         default:
-          break;
+          break
       }
-      return order;
-    },
-  },
-};
+      return order
+    }
+  }
+}
 </script>
 
 <style lang="scss" scoped>

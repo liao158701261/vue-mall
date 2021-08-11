@@ -65,104 +65,104 @@
 </template>
 
 <script>
-import CommonHead from "components/CommonHead.vue";
-import CommonTab from "components/CommonTab.vue";
-import { fetchCates, fetchItems, fetchHomeBanner, addCart } from "api";
-import { isLogin, getToken } from "utils";
-import { Toast } from "vant";
+import CommonHead from 'components/CommonHead.vue'
+import CommonTab from 'components/CommonTab.vue'
+import { fetchCates, fetchItems, fetchHomeBanner, addCart } from 'api'
+import { isLogin, getToken } from 'utils'
+import { Toast } from 'vant'
 export default {
   components: { CommonTab, CommonHead },
-  name: "classify",
-  data() {
+  name: 'classify',
+  data () {
     return {
       activeKey: 0,
       cates: [],
       basicInfo: {},
       items: [],
       banners: [],
-      isShow: false,
-    };
+      isShow: false
+    }
   },
-  created() {
-    this.fetchCates();
-    this.enterList();
-    this.fetchHomeBanner();
+  created () {
+    this.fetchCates()
+    this.enterList()
+    this.fetchHomeBanner()
   },
   methods: {
-    clickItem(id, index) {
-      //跳转详情页
+    clickItem (id, index) {
+      // 跳转详情页
       this.$router.push({
-        path: "/details",
+        path: '/details',
         query: {
           id: id,
-          index: index,
-        },
-      });
+          index: index
+        }
+      })
     },
-    addCart(id) {
+    addCart (id) {
       // 加入购物车的动作 需要登录才能访问
       if (!isLogin()) {
         // 没有登录
         Toast.fail({
-          message: "请登录",
+          message: '请登录',
           duration: 1000,
           onClose: () => {
             // 跳转到登录页
             this.$router.push({
-              path: "/login",
+              path: '/login',
               query: {
-                from: "/home",
-              },
-            });
-          },
-        });
-        return false;
+                from: '/home'
+              }
+            })
+          }
+        })
+        return false
       }
       // 登录了 加入购物车
       addCart({
         goodsId: id,
         number: 1,
-        token: getToken(),
+        token: getToken()
       }).then((res) => {
         if (res.data.code === 0) {
-          Toast.success("加入成功，请前往购买");
-          this.$store.commit("cart/set_items", res.data.data.items);
+          Toast.success('加入成功，请前往购买')
+          this.$store.commit('cart/set_items', res.data.data.items)
         }
-      });
+      })
     },
-    enterList(id) {
+    enterList (id) {
       fetchItems({
-        categoryId: id,
+        categoryId: id
       }).then((res) => {
-        console.log(res);
+        console.log(res)
         if (res.data.code === 0) {
-          this.items = res.data.data.result;
-          this.isShow = false;
+          this.items = res.data.data.result
+          this.isShow = false
         }
         if (res.data.code === 700) {
-          this.items = [];
-          this.isShow = true;
+          this.items = []
+          this.isShow = true
         }
-      });
+      })
     },
-    fetchCates() {
+    fetchCates () {
       fetchCates().then((res) => {
-        console.log(res);
+        console.log(res)
         if (res.data.code === 0) {
-          this.cates = res.data.data;
+          this.cates = res.data.data
         }
-      });
+      })
     },
-    fetchHomeBanner() {
+    fetchHomeBanner () {
       // 请求轮播数据
       fetchHomeBanner().then((res) => {
         if (res.data.code === 0) {
-          this.banners = res.data.data;
+          this.banners = res.data.data
         }
-      });
-    },
-  },
-};
+      })
+    }
+  }
+}
 </script>
 
 <style lang="scss" scoped>
